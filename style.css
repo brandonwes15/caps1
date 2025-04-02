@@ -1,0 +1,215 @@
+body {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.5)),
+              radial-gradient(circle, rgba(128, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 100%);
+  margin: 0;
+  padding: 20px; /* Add some padding around the cart */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center the food cart on the page */
+}
+
+.food-cart {
+  width: 95%; /* Adjust width as needed */
+  max-width: 600px; /* Limit maximum width for smaller screens */
+  color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  overflow: hidden; /* Clip content within rounded borders */
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-header {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 20px;
+  text-align: center;
+}
+
+.cart-banner {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  object-fit: cover; /* Maintain aspect ratio */
+}
+
+.cart-header h1 {
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+.cart-header .tagline {
+  font-size: 0.9em;
+  color: #ddd;
+  margin-bottom: 10px;
+}
+
+.cart-menu {
+  padding: 20px;
+}
+
+.cart-menu h2 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.menu-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid layout */
+  gap: 15px;
+}
+
+.menu-item {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.menu-item img {
+  width: 100%;
+  max-height: 150px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.menu-item h3 {
+  margin-top: 0;
+  margin-bottom: 5px;
+  font-size: 1.2em;
+}
+
+.menu-item .description {
+  font-size: 0.9em;
+  color: #ccc;
+  margin-bottom: 10px;
+}
+
+.menu-item .price {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.order-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.quantity-selector {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.quantity-selector button {
+  background-color: #555;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-size: 1em;
+  transition: transform 0.1s ease-in-out, opacity 0.1s ease-in-out; /* Added transition for animation */
+}
+
+.quantity-selector button.clicked {
+  transform: scale(0.95); /* Slightly scale down on click */
+  opacity: 0.8; /* Slightly reduce opacity on click */
+}
+
+.quantity-selector .quantity {
+  margin: 0 10px;
+  font-weight: bold;
+}
+
+.menu-item .add-to-cart {
+  background-color: #4caf50;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 0.9em;
+  transition: transform 0.1s ease-in-out, background-color 0.1s ease-in-out, opacity 0.1s ease-in-out; /* Added transition */
+}
+
+.menu-item .add-to-cart.clicked {
+  transform: scale(0.95);
+  opacity: 0.8;
+  background-color: #388e3c; /* Slightly darker shade of green */
+}
+
+.menu-item .customize {
+  background-color: #2196f3;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 0.9em;
+  margin-top: 5px;
+  transition: transform 0.1s ease-in-out, background-color 0.1s ease-in-out, color 0.1s ease-in-out, opacity 0.1s ease-in-out; /* Added transition */
+}
+
+.menu-item .customize.clicked {
+  transform: scale(0.95);
+  opacity: 0.8;
+  background-color: #1976d2;
+  color: #eee;
+}
+
+.cart {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 20px;
+}
+
+.cart h2 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.cart ul {
+  list-style: none;
+  padding: 0;
+}
+
+.cart li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #555;
+}
+
+.cart li:last-child {
+  border-bottom: none;
+}
+
+#cart-total {
+  font-weight: bold;
+}
+
+#checkout {
+  background-color: #ff9800;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 20px;
+  width: 100%;
+  transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out, opacity 0.1s ease-in-out; /* Added transition */
+}
+
+#checkout.clicked {
+  transform: translateY(2px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  opacity: 0.8;
+}
