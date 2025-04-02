@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Daisuki Menu</title>
+    <link rel="stylesheet" href="admin-style.css">
+    <style>
+        body {
+            background-color: #f8e8d0; /* Match main HTML background color */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .admin-panel {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4b183;
+        }
+        button {
+            padding: 5px 10px;
+            background-color: #ff6f61;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #e65a50;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-panel">
+        <header>
+            <h1>Admin Panel - Manage Menu</h1>
+        </header>
+
+        <section class="menu-management">
+            <h2>Current Menu</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="menu-list">
+                    <!-- Menu items will be dynamically loaded here -->
+                </tbody>
+            </table>
+        </section>
+
+        <section class="add-item">
+            <h2>Add New Menu Item</h2>
+            <form id="add-menu-form">
+                <input type="text" id="item-name" placeholder="Item Name" required>
+                <input type="text" id="item-description" placeholder="Description" required>
+                <input type="number" id="item-price" placeholder="Price" required>
+                <input type="file" id="item-image" accept="image/*">
+                <button type="submit">Add Item</button>
+            </form>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let menu = [
+                {name: 'Daisuki Midori Ramen', description: 'Refreshing and flavorful with a green twist.', price: 299, image: 'ramen-images/midori_ramen.jpg'},
+                {name: 'Daisuki Spicy Ramen', description: 'Bold and fiery, for a spicy kick.', price: 299, image: 'ramen-images/spicy_ramen.jpg'},
+            ];
+
+            function renderMenu() {
+                const menuList = document.getElementById('menu-list');
+                menuList.innerHTML = '';
+                menu.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><img src="${item.image}" width="50"></td>
+                        <td>${item.name}</td>
+                        <td>${item.description}</td>
+                        <td>₱${item.price}</td>
+                        <td>
+                            <button onclick="editItem(${index})">Edit</button>
+                            <button onclick="deleteItem(${index})">Delete</button>
+                        </td>
+                    `;
+                    menuList.appendChild(row);
+                });
+            }
+
+            function deleteItem(index) {
+                menu.splice(index, 1);
+                renderMenu();
+            }
+
+            document.getElementById('add-menu-form').addEventListener('submit', function (event) {
+                event.preventDefault();
+                const name = document.getElementById('item-name').value;
+                const description = document.getElementById('item-description').value;
+                const price = document.getElementById('item-price').value;
+                const image = 'ramen-images/default.jpg'; // Placeholder
+                menu.push({ name, description, price, image });
+                renderMenu();
+                event.target.reset();
+            });
+
+            renderMenu();
+        });
+    </script>
+</body>
+</html>
