@@ -93,6 +93,9 @@
             </form>
         </section>
 
+        <section class="admin-actions">
+            <button id="logout-btn">Log Out</button>
+        </section>
 
         <section class="orders">
             <h2>Current Orders</h2>
@@ -282,6 +285,20 @@ renderOrders();
 
 });
         //cartupdate
+
+        document.addEventListener('DOMContentLoaded', function () {
+    const logoutButton = document.getElementById('logout-btn');
+
+    // Check if the user is authenticated (if applicable)
+    // For now, we just assume the user is logged in, and you can implement authentication checks
+    logoutButton.addEventListener('click', function () {
+        // Clear any session data if necessary (e.g., authentication token, user info)
+        localStorage.removeItem('admin-user'); // Replace with your actual item key for the session
+        
+        // Redirect to login page after logout
+        window.location.href = 'login.html'; // Replace with your login page URL
+    });
+});
     </script>
 </body>
 </html>
