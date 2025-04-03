@@ -149,6 +149,46 @@
             <button id="customize-bowl-btn" class="customize-btn">Customize Your Own Bowl</button>
         </section>
 
+        <div class="customization-section" id="customization-section">
+            <h3>Customize Your Own Ramen</h3>
+            <label>
+                Choose Broth:
+                <select id="broth-type">
+                    <option value="Shoyu">Shoyu</option>
+                    <option value="Miso">Miso</option>
+                    <option value="Tonkotsu">Tonkotsu</option>
+                    <option value="Shio">Shio</option>
+                </select>
+            </label>
+            <label>
+                Choose Protein:
+                <select id="protein-type">
+                    <option value="Chicken">Chicken</option>
+                    <option value="Pork">Pork</option>
+                    <option value="Beef">Beef</option>
+                    <option value="Tofu">Tofu</option>
+                </select>
+            </label>
+            <label>
+                Extra Toppings:
+                <input type="checkbox" value="Egg"> Egg
+                <input type="checkbox" value="Corn"> Corn
+                <input type="checkbox" value="Cheese"> Cheese
+                <input type="checkbox" value="Seaweed"> Seaweed
+            </label>
+            <label>
+                Spice Level:
+                <select id="spice-level">
+                    <option value="Mild">Mild</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Spicy">Spicy</option>
+                </select>
+            </label>
+            <button id="confirm-custom-bowl">Add to Order</button>
+            <button id="cancel-custom-bowl">Cancel</button>
+        </div>
+        
+
         <section class="cart-menu">
             <h2>Our Delicious Menu</h2>
             <div class="menu-items">
@@ -274,46 +314,6 @@
                 </div>
             </div>
         </section>
-
-
-        <div class="customization-section" id="customization-section">
-            <h3>Customize Your Own Ramen</h3>
-            <label>
-                Choose Broth:
-                <select id="broth-type">
-                    <option value="Shoyu">Shoyu</option>
-                    <option value="Miso">Miso</option>
-                    <option value="Tonkotsu">Tonkotsu</option>
-                    <option value="Shio">Shio</option>
-                </select>
-            </label>
-            <label>
-                Choose Protein:
-                <select id="protein-type">
-                    <option value="Chicken">Chicken</option>
-                    <option value="Pork">Pork</option>
-                    <option value="Beef">Beef</option>
-                    <option value="Tofu">Tofu</option>
-                </select>
-            </label>
-            <label>
-                Extra Toppings:
-                <input type="checkbox" value="Egg"> Egg
-                <input type="checkbox" value="Corn"> Corn
-                <input type="checkbox" value="Cheese"> Cheese
-                <input type="checkbox" value="Seaweed"> Seaweed
-            </label>
-            <label>
-                Spice Level:
-                <select id="spice-level">
-                    <option value="Mild">Mild</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Spicy">Spicy</option>
-                </select>
-            </label>
-            <button id="confirm-custom-bowl">Add to Order</button>
-            <button id="cancel-custom-bowl">Cancel</button>
-        </div>
 
 
         <div class="overlay" id="overlay"></div>
