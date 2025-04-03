@@ -9,16 +9,6 @@ body {
   align-items: center; /* Center the food cart on the page */
 }
 
-.food-cart {
-  width: 95%; /* Adjust width as needed */
-  max-width: 600px; /* Limit maximum width for smaller screens */
-  color: white;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-  overflow: hidden; /* Clip content within rounded borders */
-  display: flex;
-  flex-direction: column;
-}
 
 .cart-header {
   background-color: rgba(0, 0, 0, 0.7);
