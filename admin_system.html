@@ -170,45 +170,63 @@
 
         //cartupdate
         document.addEventListener('DOMContentLoaded', function () {
-        function renderOrders() {
-            const ordersTable = document.getElementById('orders-table').getElementsByTagName('tbody')[0];
-            ordersTable.innerHTML = ''; // Clear any existing rows
 
-            // Get the orders from localStorage
-            const orders = JSON.parse(localStorage.getItem('admin-orders')) || [];
-            orders.forEach((order, index) => {
-                const row = document.createElement('tr');
-                
-                // Create a string of item names and their prices
-                const items = order.map(item => `${item.name} (₱${item.price})`).join(', ');
-                
-                // Calculate the total price for the order
-                const total = order.reduce((sum, item) => sum + item.price, 0);
+// Function to render orders from localStorage
+function renderOrders() {
+    const ordersTable = document.getElementById('orders-table').getElementsByTagName('tbody')[0];
+    ordersTable.innerHTML = ''; // Clear any existing rows
 
-                // Create a new row for the order and populate the cells
-                row.innerHTML = `
-                    <td>Order #${index + 1}</td>
-                    <td>${items}</td>
-                    <td>₱${total.toFixed(2)}</td>
-                    <td><button onclick="serveOrder(${index})">Serve</button></td>
-                `;
-                
-                // Append the new row to the table
-                ordersTable.appendChild(row);
-            });
-        }
+    const orders = JSON.parse(localStorage.getItem('admin-orders')) || [];
 
-        // Function to remove an order when it is served
-        function serveOrder(index) {
-            const orders = JSON.parse(localStorage.getItem('admin-orders')) || [];
-            orders.splice(index, 1);  // Remove the served order from the array
-            localStorage.setItem('admin-orders', JSON.stringify(orders)); // Update localStorage
-            renderOrders(); // Re-render the orders table
-        }
+    if (orders.length === 0) {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td colspan="4">No orders yet.</td>`;
+        ordersTable.appendChild(row);
+    }
 
-        // Call the function to render the orders when the page loads
-        renderOrders();
+    orders.forEach((order, index) => {
+        const row = document.createElement('tr');
+        const items = order.map(item => `${item.name} (₱${item.price})`).join(', ');
+        const total = order.reduce((sum, item) => sum + item.price, 0);
+
+        row.innerHTML = `
+            <td>Order #${index + 1}</td>
+            <td>${items}</td>
+            <td>₱${total.toFixed(2)}</td>
+            <td><button class="serve-btn" data-index="${index}">Serve</button></td>
+        `;
+        ordersTable.appendChild(row);
     });
+
+    // Attach event listeners to each "Serve" button dynamically
+    const serveButtons = document.querySelectorAll('.serve-btn');
+    serveButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const index = button.getAttribute('data-index');
+            serveOrder(index);
+        });
+    });
+}
+
+// Function to serve an order and remove it from the list
+function serveOrder(index) {
+    // Get the orders from localStorage
+    const orders = JSON.parse(localStorage.getItem('admin-orders')) || [];
+
+    // Remove the served order from the orders array
+    orders.splice(index, 1);
+
+    // Save the updated orders back to localStorage
+    localStorage.setItem('admin-orders', JSON.stringify(orders));
+
+    // Re-render the orders table to reflect the updated list
+    renderOrders();
+}
+
+// Call the function to render orders when the page loads
+renderOrders();
+
+});
         //cartupdate
     </script>
 </body>
