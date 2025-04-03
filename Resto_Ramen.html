@@ -345,7 +345,63 @@ const addToCartButtons = document.querySelectorAll('.add-to-cart');
         const cartItemsList = document.getElementById('cart-items');
         const cartTotalDisplay = document.getElementById('cart-total');
         const checkoutButton = document.getElementById('checkout');
+
         let cart = []; // Array to store cart items
+
+        //cartupdate
+        
+// Function to add item to cart
+function addToCart(name, price) {
+            cart.push({ name, price });
+            updateCartDisplay();
+        }
+
+        // Function to update cart display
+        function updateCartDisplay() {
+            const cartItemsList = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+
+            // Clear the current cart items
+            cartItemsList.innerHTML = '';
+            let totalPrice = 0;
+
+            // Loop through the cart and display items
+            cart.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${item.name} - ₱${item.price}`;
+                cartItemsList.appendChild(listItem);
+                totalPrice += item.price;
+            });
+
+            // Update the total price
+            cartTotal.textContent = `₱${totalPrice.toFixed(2)}`;
+        }
+
+        // Checkout button functionality
+        document.getElementById('checkout').addEventListener('click', function () {
+            if (cart.length === 0) {
+                alert("Your cart is empty! Please add items before checking out.");
+                return;
+            }
+
+            // Create an order object
+            const orderData = cart.map(item => ({
+                name: item.name,
+                price: item.price
+            }));
+
+            // Save the order data (you can later send this to your server)
+            const adminOrders = JSON.parse(localStorage.getItem('admin-orders')) || [];
+            adminOrders.push(orderData);
+            localStorage.setItem('admin-orders', JSON.stringify(adminOrders));
+
+            // Display an alert and clear the cart
+            alert("Your order has been placed!");
+            cart = [];  // Empty the cart
+            updateCartDisplay();
+        });
+
+        //cart update
 
         function updateCartDisplay() {
             cartItemsList.innerHTML = '';
@@ -456,6 +512,38 @@ const addToCartButtons = document.querySelectorAll('.add-to-cart');
         document.getElementById('cancel-custom-bowl').addEventListener('click', function() {
             document.getElementById('customization-section').style.display = 'none';
         });
+
+        //fetch
+        document.addEventListener("DOMContentLoaded", function () {
+    fetch("fetch_menu.php")
+        .then(response => response.json())
+        .then(data => {
+            let menuContainer = document.getElementById("menu-list");
+            menuContainer.innerHTML = "";
+
+            data.forEach(item => {
+                menuContainer.innerHTML += `
+                    <div class="menu-item">
+                        <img src="${item.image}" alt="${item.name}" width="100">
+                        <h3>${item.name}</h3>
+                        <p>${item.description}</p>
+                        <p>₱${item.price}</p>
+                        <button onclick="addToOrder(${item.price})">Add to Order</button>
+                    </div>
+                `;
+            });
+        })
+        .catch(error => console.error("Error fetching menu:", error));
+});
+
+// Function to update order total
+let total = 0;
+function addToOrder(price) {
+    total += parseFloat(price);
+    document.getElementById("cart-total").innerText = `Total: ₱${total.toFixed(2)}`;
+}
+//fetch
+
 
     </script>
 </body>
