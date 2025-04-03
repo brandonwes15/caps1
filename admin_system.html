@@ -116,57 +116,111 @@
 
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            let menu = [
-                {name: 'Daisuki Midori Ramen', description: 'Refreshing and flavorful with a green twist.', price: 299, image: 'ramen-images/midori_ramen.jpg'},
-                {name: 'Daisuki Spicy Ramen', description: 'Bold and fiery, for a spicy kick.', price: 299, image: 'ramen-images/spicy_ramen.jpg'},
-                {name: 'Tonkatsu Original Ramen', description: 'Classic rich pork broth with tender noodles.', price: 299, image: 'ramen-images/Tonkatsu_ramen.jpg'},
-                {name: 'Tantamen Ramen', description: 'Rich and flavorful with savory topping and spicy yet creamy soup broth.', price: 320, image: 'ramen-images/Tantanmen_ramen.jpg'},
-                {name: 'Shio Ramen', description: 'Salt-flavored ramen features a light, clear broth with simple chicken stock and dashi.', price: 320, image: 'ramen-images/Shio_ramen.jpg'},
-                {name: 'Shoyu Ramen', description: 'A flavorful pork-bone broth with wavy noodles.', price: 320, image: 'ramen-images/Shoyu_ramen.jpg'},
-                {name: 'Miso Ramen', description: 'A flavorful pork-bone broth with wavy noodles.', price: 295, image: 'ramen-images/Miso_ramen.jpg'},
-                {name: 'Chasu Ramen', description: 'A pork belly that is rolled and braised in a flavorful mix.', price: 360, image: 'ramen-images/Chasu_ramen.jpg'},
+       document.addEventListener('DOMContentLoaded', function () {
+    // Get the menu from localStorage or use default if not found
+    let menu = JSON.parse(localStorage.getItem('admin-menu')) || [
+        {name: 'Daisuki Midori Ramen', description: 'Refreshing and flavorful with a green twist.', price: 299, image: 'ramen-images/midori_ramen.jpg'},
+        {name: 'Daisuki Spicy Ramen', description: 'Bold and fiery, for a spicy kick.', price: 299, image: 'ramen-images/spicy_ramen.jpg'},
+        {name: 'Tonkatsu Original Ramen', description: 'Classic rich pork broth with tender noodles.', price: 299, image: 'ramen-images/Tonkatsu_ramen.jpg'},
+        {name: 'Tantamen Ramen', description: 'Rich and flavorful with savory topping and spicy yet creamy soup broth.', price: 320, image: 'ramen-images/Tantanmen_ramen.jpg'},
+        {name: 'Shio Ramen', description: 'Salt-flavored ramen features a light, clear broth with simple chicken stock and dashi.', price: 320, image: 'ramen-images/Shio_ramen.jpg'},
+        {name: 'Shoyu Ramen', description: 'A flavorful pork-bone broth with wavy noodles.', price: 320, image: 'ramen-images/Shoyu_ramen.jpg'},
+        {name: 'Miso Ramen', description: 'A flavorful pork-bone broth with wavy noodles.', price: 295, image: 'ramen-images/Miso_ramen.jpg'},
+        {name: 'Chasu Ramen', description: 'A pork belly that is rolled and braised in a flavorful mix.', price: 360, image: 'ramen-images/Chasu_ramen.jpg'},
+    ];
 
+    // Function to render the menu
+    function renderMenu() {
+        const menuList = document.getElementById('menu-list');
+        menuList.innerHTML = ''; // Clear existing rows
 
-            ];
-
-            function renderMenu() {
-                const menuList = document.getElementById('menu-list');
-                menuList.innerHTML = '';
-                menu.forEach((item, index) => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><img src="${item.image}" width="50"></td>
-                        <td>${item.name}</td>
-                        <td>${item.description}</td>
-                        <td>₱${item.price}</td>
-                        <td>
-                            <button onclick="editItem(${index})">Edit</button>
-                            <button onclick="deleteItem(${index})">Delete</button>
-                        </td>
-                    `;
-                    menuList.appendChild(row);
-                });
-            }
-
-            function deleteItem(index) {
-                menu.splice(index, 1);
-                renderMenu();
-            }
-
-            document.getElementById('add-menu-form').addEventListener('submit', function (event) {
-                event.preventDefault();
-                const name = document.getElementById('item-name').value;
-                const description = document.getElementById('item-description').value;
-                const price = document.getElementById('item-price').value;
-                const image = 'ramen-images/default.jpg'; // Placeholder
-                menu.push({ name, description, price, image });
-                renderMenu();
-                event.target.reset();
-            });
-
-            renderMenu();
+        menu.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><img src="${item.image}" width="50"></td>
+                <td>${item.name}</td>
+                <td>${item.description}</td>
+                <td>₱${item.price}</td>
+                <td>
+                    <button class="edit-btn" data-index="${index}">Edit</button>
+                    <button class="delete-btn" data-index="${index}">Delete</button>
+                </td>
+            `;
+            menuList.appendChild(row);
         });
+
+        // Attach event listeners for the edit and delete buttons
+        const editButtons = document.querySelectorAll('.edit-btn');
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const index = button.getAttribute('data-index');
+                editItem(index);
+            });
+        });
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const index = button.getAttribute('data-index');
+                deleteItem(index);
+            });
+        });
+    }
+
+    // Function to delete an item from the menu
+    function deleteItem(index) {
+        menu.splice(index, 1); // Remove the item from the menu array
+        renderMenu(); // Re-render the menu
+        localStorage.setItem('admin-menu', JSON.stringify(menu)); // Save to localStorage
+    }
+
+    // Function to edit an item in the menu
+    function editItem(index) {
+        const item = menu[index];
+
+        const name = prompt('Enter new name:', item.name);
+        const description = prompt('Enter new description:', item.description);
+        const price = prompt('Enter new price:', item.price);
+        const image = prompt('Enter new image URL:', item.image);
+
+        if (name && description && price && image) {
+            menu[index] = { name, description, price: parseFloat(price), image };
+            renderMenu(); // Re-render the menu with updated values
+            localStorage.setItem('admin-menu', JSON.stringify(menu)); // Save to localStorage
+        }
+    }
+
+    // Add Item form submission handling
+    document.getElementById('add-menu-form').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const name = document.getElementById('item-name').value;
+        const description = document.getElementById('item-description').value;
+        const price = document.getElementById('item-price').value;
+        const image = document.getElementById('item-image').files[0] ? URL.createObjectURL(document.getElementById('item-image').files[0]) : 'ramen-images/default.jpg'; // Placeholder image
+
+        // Add the new item to the menu array
+        menu.push({ name, description, price: parseFloat(price), image });
+
+        // Re-render the menu to include the new item
+        renderMenu();
+
+        // Save the updated menu to localStorage
+        localStorage.setItem('admin-menu', JSON.stringify(menu));
+
+        // Clear the form
+        event.target.reset();
+    });
+
+    // Initial render of the menu when the page loads
+    renderMenu();
+});
+
+
+
+
+
 
         //cartupdate
         document.addEventListener('DOMContentLoaded', function () {
