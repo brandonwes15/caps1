@@ -72,7 +72,7 @@
                         <th>Image</th>
                         <th>Name</th>
                         <th>Description</th>
-                        <th>Price</th>
+                        <th>Price</th>  
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -92,13 +92,42 @@
                 <button type="submit">Add Item</button>
             </form>
         </section>
+
+
+        <section class="orders">
+            <h2>Current Orders</h2>
+            <table id="orders-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Orders will be dynamically populated here -->
+                </tbody>
+            </table>
+        </section>
+
+
     </div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             let menu = [
                 {name: 'Daisuki Midori Ramen', description: 'Refreshing and flavorful with a green twist.', price: 299, image: 'ramen-images/midori_ramen.jpg'},
                 {name: 'Daisuki Spicy Ramen', description: 'Bold and fiery, for a spicy kick.', price: 299, image: 'ramen-images/spicy_ramen.jpg'},
+                {name: 'Tonkatsu Original Ramen', description: 'Classic rich pork broth with tender noodles.', price: 299, image: 'ramen-images/Tonkatsu_ramen.jpg'},
+                {name: 'Tantamen Ramen', description: 'Rich and flavorful with savory topping and spicy yet creamy soup broth.', price: 320, image: 'ramen-images/Tantanmen_ramen.jpg'},
+                {name: 'Shio Ramen', description: 'Salt-flavored ramen features a light, clear broth with simple chicken stock and dashi.', price: 320, image: 'ramen-images/Shio_ramen.jpg'},
+                {name: 'Shoyu Ramen', description: 'A flavorful pork-bone broth with wavy noodles.', price: 320, image: 'ramen-images/Shoyu_ramen.jpg'},
+                {name: 'Miso Ramen', description: 'A flavorful pork-bone broth with wavy noodles.', price: 295, image: 'ramen-images/Miso_ramen.jpg'},
+                {name: 'Chasu Ramen', description: 'A pork belly that is rolled and braised in a flavorful mix.', price: 360, image: 'ramen-images/Chasu_ramen.jpg'},
+
+
             ];
 
             function renderMenu() {
@@ -138,6 +167,49 @@
 
             renderMenu();
         });
+
+        //cartupdate
+        document.addEventListener('DOMContentLoaded', function () {
+        function renderOrders() {
+            const ordersTable = document.getElementById('orders-table').getElementsByTagName('tbody')[0];
+            ordersTable.innerHTML = ''; // Clear any existing rows
+
+            // Get the orders from localStorage
+            const orders = JSON.parse(localStorage.getItem('admin-orders')) || [];
+            orders.forEach((order, index) => {
+                const row = document.createElement('tr');
+                
+                // Create a string of item names and their prices
+                const items = order.map(item => `${item.name} (₱${item.price})`).join(', ');
+                
+                // Calculate the total price for the order
+                const total = order.reduce((sum, item) => sum + item.price, 0);
+
+                // Create a new row for the order and populate the cells
+                row.innerHTML = `
+                    <td>Order #${index + 1}</td>
+                    <td>${items}</td>
+                    <td>₱${total.toFixed(2)}</td>
+                    <td><button onclick="serveOrder(${index})">Serve</button></td>
+                `;
+                
+                // Append the new row to the table
+                ordersTable.appendChild(row);
+            });
+        }
+
+        // Function to remove an order when it is served
+        function serveOrder(index) {
+            const orders = JSON.parse(localStorage.getItem('admin-orders')) || [];
+            orders.splice(index, 1);  // Remove the served order from the array
+            localStorage.setItem('admin-orders', JSON.stringify(orders)); // Update localStorage
+            renderOrders(); // Re-render the orders table
+        }
+
+        // Call the function to render the orders when the page loads
+        renderOrders();
+    });
+        //cartupdate
     </script>
 </body>
 </html>
