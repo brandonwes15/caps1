@@ -1,0 +1,59 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  text-align: center;
+  padding: 20px;
+}
+
+#login-container {
+  background: white;
+  padding: 20px;
+  width: 300px;
+  margin: 50px auto;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+#admin-dashboard {
+  display: none;
+  max-width: 600px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+button {
+  background: #333;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+button:hover {
+  background: #555;
+}
+
+#menu-table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+#menu-table th, #menu-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+#menu-table th {
+  background: #f4f4f4;
+}
+
+#order-list {
+  list-style-type: none;
+  padding: 0;
+}
