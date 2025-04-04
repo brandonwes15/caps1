@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daisuki Cart Admin Panel</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        h1,
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        button {
+            padding: 10px 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        #addItemBtn {
+            background-color: #27ae60;
+            color: white;
+            margin-bottom: 20px;
+            display: block;
+            margin: 20px auto;
+        }
+
+        #addItemBtn:hover {
+            background-color: #219653;
+        }
+
+        .form-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border: 1px solid #ccc;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            border-radius: 8px;
+            width: 500px;
+        }
+
+        .form-container.show {
+            display: block;
+        }
+
+        .form-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-container input,
+        .form-container textarea {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .form-container button[type="submit"] {
+            background-color: #3498db;
+            color: white;
+            margin-right: 10px;
+        }
+
+        .form-container button[type="submit"]:hover {
+            background-color: #2980b9;
+        }
+
+        .form-container button#cancelForm {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .form-container button#cancelForm:hover {
+            background-color: #c0392b;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        td button {
+            background-color: #3498db;
+            color: white;
+            margin: 5px;
+        }
+
+        td button:hover {
+            background-color: #2980b9;
+        }
+
+        td button:last-child {
+            background-color: #e74c3c;
+        }
+
+        td button:last-child:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Daisuki Cart Admin Panel</h1>
+
+    <button id="addItemBtn">Add New Item</button>
+
+    <div class="form-container" id="itemForm">
+        <h2>Add/Edit Item</h2>
+        <form id="itemDetailsForm">
+            <label for="itemName">Item Name:</label>
+            <input type="text" id="itemName" name="itemName" required>
+
+            <label for="itemPrice">Price:</label>
+            <input type="number" id="itemPrice" name="itemPrice" required>
+
+            <label for="itemDescription">Description:</label>
+            <textarea id="itemDescription" name="itemDescription"></textarea>
+
+            <label for="itemImage">Image URL:</label>
+            <input type="text" id="itemImage" name="itemImage">
+
+            <button type="submit">Save</button>
+            <button type="button" id="cancelForm">Cancel</button>
+        </form>
+    </div>
+
+    <div class="overlay" id="formOverlay"></div>
+
+    <h2>Menu Items</h2>
+    <table id="menuTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>Image</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <section class="admin-actions">
+        <button id="logout-btn">Log Out</button>
+    </section>
+
+    <h2>Pending Orders</h2>
+    <table id="pendingOrdersTable">
+        <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        const menuItems = [{
+                name: "Daisuki Midori Ramen",
+                price: 299,
+                description: "Refreshing and flavorful with a green twist.",
+                image: "ramen-images/midori_ramen.jpg"
+            },
+            {
+                name: "Daisuki Spicy Ramen",
+                price: 299,
+                description: "Bold and fiery, for a spicy kick.",
+                image: "ramen-images/spicy_ramen.jpg"
+            },
+            {
+                name: "Tonkatsu Original Ramen",
+                price: 299,
+                description: "Classic rich pork broth with tender noodles.",
+                image: "ramen-images/Tonkatsu_ramen.jpg"
+            },
+            {
+                name: "Tantamen Ramen",
+                price: 320,
+                description: "Rich and flavorful noodle soup with savory topping and spicy yet creamy soup broth.",
+                image: "ramen-images/Tantanmen_ramen.jpg"
+            },
+            {
+                name: "Shio Ramen",
+                price: 320,
+                description: "Salt-flavored ramen features a light, clear broth with simple chicken stock and dashi.",
+                image: "ramen-images/Shio_ramen.jpg"
+            },
+            {
+                name: "Shoyu Ramen",
+                price: 320,
+                description: "A flavorful pork-bone broth with wavy noodles.",
+                image: "ramen-images/Shoyu_ramen.jpg"
+            },
+            {
+                name: "Miso Ramen",
+                price: 295,
+                description: "A flavorful pork-bone broth with wavy noodles.",
+                image: "ramen-images/Miso_Ramen.jpg"
+            },
+            {
+                name: "Chasu Ramen",
+                price: 360,
+                description: "A pork belly that's rolled and braised in a flavorful mix.",
+                image: "ramen-images/Chashu_ramen.jpg"
+            },
+        ];
+
+
+        const menuTable = document.getElementById('menuTable').getElementsByTagName('tbody')[0];
+        const pendingOrdersTable = document.getElementById('pendingOrdersTable').getElementsByTagName('tbody')[0];
+        const addItemBtn = document.getElementById('addItemBtn');
+        const itemForm = document.getElementById('itemForm');
+        const itemDetailsForm = document.getElementById('itemDetailsForm');
+        const cancelForm = document.getElementById('cancelForm');
+        const formOverlay = document.getElementById('formOverlay');
+
+        let editingIndex = -1;
+
+        function populateTable() {
+            menuTable.innerHTML = '';
+            menuItems.forEach((item, index) => {
+                const row = menuTable.insertRow();
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>₱${item.price.toFixed(2)}</td>
+                    <td>${item.description}</td>
+                    <td><img src="${item.image}" alt="${item.name}" style="width: 50px; border-radius: 5px;"></td>
+                    <td>
+                        <button onclick="editItem(${index})">Edit</button>
+                        <button onclick="deleteItem(${index})">Delete</button>
+                    </td>
+                `;
+            });
+        }
+
+        function populatePendingOrders() {
+            pendingOrdersTable.innerHTML = '';
+            for (let i = 0; i < pendingOrders.length; i++) {
+                const order = pendingOrders[i];
+                const row = pendingOrdersTable.insertRow();
+                row.innerHTML = `
+                    <td>${order.orderNumber}</td>
+                    <td>${order.itemName}</td>
+                    <td>${order.quantity}</td>
+                    <td>₱${order.price.toFixed(2)}</td>
+                    <td>${order.status}</td>
+                    <td>
+                        <button onclick="markAsServed(${order.orderNumber})">Mark as Served</button>
+                    </td>
+                `;
+            }
+        }
+
+        function markAsServed(orderNumber) {
+            const index = pendingOrders.findIndex(order => order.orderNumber === orderNumber);
+
+            if (index !== -1) {
+                pendingOrders.splice(index, 1);
+                populatePendingOrders();
+                console.log(`Order #${orderNumber} marked as served and removed.`);
+            } else {
+                console.log(`Order #${orderNumber} not found.`);
+            }
+        }
+
+        function editItem(index) {
+            editingIndex = index;
+            const item = menuItems[index];
+            document.getElementById('itemName').value = item.name;
+            document.getElementById('itemPrice').value = item.price;
+            document.getElementById('itemDescription').value = item.description;
+            document.getElementById('itemImage').value = item.image;
+            itemForm.classList.add('show');
+            formOverlay.classList.add('show');
+        }
+
+        function deleteItem(index) {
+            if (confirm('Are you sure you want to delete this item?')) {
+                menuItems.splice(index, 1);
+                populateTable();
+            }
+        }
+
+        itemDetailsForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const newItem = {
+                name: document.getElementById('itemName').value,
+                price: parseFloat(document.getElementById('itemPrice').value),
+                description: document.getElementById('itemDescription').value,
+                image: document.getElementById('itemImage').value,
+            };
+            if (editingIndex === -1) {
+                menuItems.push(newItem);
+            } else {
+                menuItems[editingIndex] = newItem;
+                editingIndex = -1;
+            }
+            itemForm.classList.remove('show');
+            formOverlay.classList.remove('show');
+            populateTable();
+            itemDetailsForm.reset();
+        });
+
+        cancelForm.addEventListener('click', function() {
+            itemForm.classList.remove('show');
+            formOverlay.classList.remove('show');
+            itemDetailsForm.reset();
+            editingIndex = -1;
+        });
+
+        addItemBtn.addEventListener('click', function() {
+            itemForm.classList.add('show');
+            formOverlay.classList.add('show');
+        });
+
+        populateTable();
+        populatePendingOrders();
+
+// reflected orders
+            
+document.addEventListener("DOMContentLoaded", function () {
+    populatePendingOrders();
+});
+
+function populatePendingOrders() {
+    let pendingOrders = JSON.parse(localStorage.getItem("pendingOrders")) || [];
+    const pendingOrdersTable = document.getElementById("pendingOrdersTable").getElementsByTagName("tbody")[0];
+
+    // Clear previous entries
+    pendingOrdersTable.innerHTML = "";
+
+    if (pendingOrders.length === 0) {
+        console.log("No pending orders found.");
+    } else {
+        console.log("Loaded Pending Orders:", pendingOrders);
+    }
+
+    pendingOrders.forEach((order, index) => {
+        const row = pendingOrdersTable.insertRow();
+        row.innerHTML = `
+            <td>${order.orderNumber}</td>
+            <td>${order.itemName}</td>
+            <td>${order.quantity}</td>
+            <td>₱${order.price.toFixed(2)}</td>
+            <td>${order.status}</td>
+            <td>
+                <button onclick="markAsServed(${index})">Mark as Served</button>
+            </td>
+        `;
+    });
+}
+
+function markAsServed(index) {
+    let pendingOrders = JSON.parse(localStorage.getItem("pendingOrders")) || [];
+
+    if (index !== -1) {
+        pendingOrders.splice(index, 1);
+        localStorage.setItem("pendingOrders", JSON.stringify(pendingOrders));
+        populatePendingOrders();
+        console.log(`Order marked as served and removed.`);
+    } else {
+        console.log(`Order not found.`);
+    }
+}
+
+
+        //reflected orders
+
+
+        //logout
+        document.addEventListener('DOMContentLoaded', function () {
+    const logoutButton = document.getElementById('logout-btn');
+
+    // Check if the user is authenticated (if applicable)
+    // For now, we just assume the user is logged in, and you can implement authentication checks
+    logoutButton.addEventListener('click', function () {
+        // Clear any session data if necessary (e.g., authentication token, user info)
+        localStorage.removeItem('admin-user'); // Replace with your actual item key for the session
+        
+        // Redirect to login page after logout
+        window.location.href = 'login.html'; // Replace with your login page URL
+    });
+});
+    </script>
+</body>
+
+</html> 
