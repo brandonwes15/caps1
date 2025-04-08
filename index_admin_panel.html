@@ -298,35 +298,57 @@
             });
         }
 
-        function populatePendingOrders() {
-            pendingOrdersTable.innerHTML = '';
-            for (let i = 0; i < pendingOrders.length; i++) {
-                const order = pendingOrders[i];
-                const row = pendingOrdersTable.insertRow();
-                row.innerHTML = `
-                    <td>${order.orderNumber}</td>
-                    <td>${order.itemName}</td>
-                    <td>${order.quantity}</td>
-                    <td>₱${order.price.toFixed(2)}</td>
-                    <td>${order.status}</td>
-                    <td>
-                        <button onclick="markAsServed(${order.orderNumber})">Mark as Served</button>
-                    </td>
-                `;
-            }
-        }
+        //reflection
 
-        function markAsServed(orderNumber) {
-            const index = pendingOrders.findIndex(order => order.orderNumber === orderNumber);
+        document.addEventListener("DOMContentLoaded", function() {
+    // Populate pending orders table
+    populatePendingOrders();
+});
 
-            if (index !== -1) {
-                pendingOrders.splice(index, 1);
-                populatePendingOrders();
-                console.log(`Order #${orderNumber} marked as served and removed.`);
-            } else {
-                console.log(`Order #${orderNumber} not found.`);
-            }
-        }
+function populatePendingOrders() {
+    let pendingOrders = JSON.parse(localStorage.getItem("admin-orders")) || [];
+    const pendingOrdersTable = document.getElementById("pendingOrdersTable").getElementsByTagName("tbody")[0];
+
+    // Clear previous table content
+    pendingOrdersTable.innerHTML = "";
+
+    if (pendingOrders.length === 0) {
+        pendingOrdersTable.innerHTML = `<tr><td colspan="6">No pending orders.</td></tr>`;
+        return;
+    }
+
+    pendingOrders.forEach((order, index) => {
+        const row = pendingOrdersTable.insertRow();
+        const items = order.items.map(item => `${item.name} (₱${item.price})`).join(", ");
+
+        row.innerHTML = `
+            <td>${order.orderNumber}</td>
+            <td>${items}</td>
+            <td>₱${order.total.toFixed(2)}</td>
+            <td>${order.status}</td>
+            <td>
+                <button onclick="markAsServed(${index})">Mark as Served</button>
+            </td>
+        `;
+    });
+}
+
+function markAsServed(index) {
+    let pendingOrders = JSON.parse(localStorage.getItem("admin-orders")) || [];
+
+    if (index !== -1) {
+        pendingOrders[index].status = "Served"; // Update order status
+        localStorage.setItem("admin-orders", JSON.stringify(pendingOrders)); // Save updated orders
+        populatePendingOrders(); // Refresh the table
+        console.log(`Order #${pendingOrders[index].orderNumber} marked as served.`);
+    } else {
+        console.log(`Order not found.`);
+    }
+}
+
+//reflection
+
+
 
         function editItem(index) {
             editingIndex = index;
@@ -381,56 +403,61 @@
         populateTable();
         populatePendingOrders();
 
-// reflected orders
+
+
+        // reflected orders
             
 document.addEventListener("DOMContentLoaded", function () {
-    populatePendingOrders();
+    function renderOrders() {
+        const ordersTable = document.getElementById("orders-table").getElementsByTagName("tbody")[0];
+        ordersTable.innerHTML = ""; // Clear table
+
+        const orders = JSON.parse(localStorage.getItem("admin-orders")) || [];
+
+        if (orders.length === 0) {
+            ordersTable.innerHTML = `<tr><td colspan="4">No orders yet.</td></tr>`;
+            return;
+        }
+
+        orders.forEach((order, index) => {
+            const row = document.createElement("tr");
+            const items = order.items.map(item => `${item.name} (₱${item.price})`).join(", ");
+
+            row.innerHTML = `
+                <td>Order #${order.orderNumber}</td>
+                <td>${items}</td>
+                <td>₱${order.total.toFixed(2)}</td>
+                <td>${order.status}</td>
+                <td><button class="serve-btn" data-index="${index}">Serve</button></td>
+            `;
+            ordersTable.appendChild(row);
+        });
+
+        // Attach event listeners to "Serve" buttons
+        document.querySelectorAll(".serve-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                const index = this.getAttribute("data-index");
+                serveOrder(index);
+            });
+        });
+    }
+
+    function serveOrder(index) {
+        let orders = JSON.parse(localStorage.getItem("admin-orders")) || [];
+
+        if (orders[index]) {
+            orders.splice(index, 1);
+            localStorage.setItem("admin-orders", JSON.stringify(orders));
+            renderOrders();
+        }
+    }
+
+    renderOrders();
 });
-
-function populatePendingOrders() {
-    let pendingOrders = JSON.parse(localStorage.getItem("pendingOrders")) || [];
-    const pendingOrdersTable = document.getElementById("pendingOrdersTable").getElementsByTagName("tbody")[0];
-
-    // Clear previous entries
-    pendingOrdersTable.innerHTML = "";
-
-    if (pendingOrders.length === 0) {
-        console.log("No pending orders found.");
-    } else {
-        console.log("Loaded Pending Orders:", pendingOrders);
-    }
-
-    pendingOrders.forEach((order, index) => {
-        const row = pendingOrdersTable.insertRow();
-        row.innerHTML = `
-            <td>${order.orderNumber}</td>
-            <td>${order.itemName}</td>
-            <td>${order.quantity}</td>
-            <td>₱${order.price.toFixed(2)}</td>
-            <td>${order.status}</td>
-            <td>
-                <button onclick="markAsServed(${index})">Mark as Served</button>
-            </td>
-        `;
-    });
-}
-
-function markAsServed(index) {
-    let pendingOrders = JSON.parse(localStorage.getItem("pendingOrders")) || [];
-
-    if (index !== -1) {
-        pendingOrders.splice(index, 1);
-        localStorage.setItem("pendingOrders", JSON.stringify(pendingOrders));
-        populatePendingOrders();
-        console.log(`Order marked as served and removed.`);
-    } else {
-        console.log(`Order not found.`);
-    }
-}
-
 
         //reflected orders
 
+        
 
         //logout
         document.addEventListener('DOMContentLoaded', function () {
