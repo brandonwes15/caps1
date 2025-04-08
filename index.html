@@ -528,6 +528,7 @@
         const checkoutButton = document.getElementById('checkout');
         let cart = [];
 
+
         function updateCartDisplay() {
             cartItemsList.innerHTML = '';
             let total = 0;
@@ -639,50 +640,44 @@
     { orderNumber: 1, itemName: "Miso Ramen", quantity: 2, price: 295, status: "Pending" }
 ];
 
+ //reflect to the admin panel
 
-        //reflect to the admin panel
+ let cartItems = [
+        { name: "Daisuki Midori Ramen", price: 299, quantity: 2 },
+        { name: "Daisuki Spicy Ramen", price: 299, quantity: 1 },
+    ];
 
-        document.getElementById("checkout").addEventListener("click", function () {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const checkoutBtn = document.getElementById("checkout");
 
-    if (cart.length === 0) {
-        alert("Your cart is empty!");
-        return;
-    }
+    checkoutBtn.addEventListener("click", function() {
+        // Assuming you have a function to calculate the total
+        const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-    let pendingOrders = JSON.parse(localStorage.getItem("pendingOrders")) || [];
+        // Generate a random order number
+        const orderNumber = Math.floor(Math.random() * 1000);
 
-    let lastOrderNumber = pendingOrders.length > 0 ? pendingOrders[pendingOrders.length - 1].orderNumber : 0;
+        // Create the order object
+        const order = {
+            orderNumber: orderNumber,
+            items: cartItems,
+            total: total,
+            status: "Pending",
+        };
 
-    cart.forEach((item, index) => {
-        pendingOrders.push({
-            orderNumber: lastOrderNumber + index + 1, // Unique order number
-            itemName: item.name,
-            quantity: item.quantity,
-            price: item.price * item.quantity,
-            status: "Pending"
-        });
+        // Save to localStorage (or a different place based on your setup)
+        let orders = JSON.parse(localStorage.getItem("admin-orders")) || [];
+        orders.push(order);
+        localStorage.setItem("admin-orders", JSON.stringify(orders));
+
+        // Clear the cart (optional)
+        cartItems = [];
+
+        // Optionally, redirect to the confirmation page or show a success message
+        alert("Order placed successfully!");
     });
 
-    // ✅ Ensure the data is saved
-    try {
-        localStorage.setItem("pendingOrders", JSON.stringify(pendingOrders));
-        console.log("Pending orders saved:", JSON.parse(localStorage.getItem("pendingOrders")));
-    } catch (error) {
-        console.error("Error saving to localStorage:", error);
-    }
-
-    // Clear the cart after checkout
-    localStorage.removeItem("cart");
-
-    alert("Order placed successfully!");
-});
-
-
-
 
         //reflect to the admin panel
-
 
 
          //fetch
