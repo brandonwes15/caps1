@@ -11,6 +11,7 @@ body {
   scroll-behavior: smooth;
   color: white;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.6);
+  text-align: center;
 }
 
 /* Food Cart Container (Keep as is) */
