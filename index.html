@@ -192,6 +192,31 @@
     outline: none;
     box-shadow: 0 0 5px rgba(255, 111, 97, 0.8); /* Soft glow on focus */
 }
+
+#order-mode-display {
+    font-size: 20px;
+    font-weight: bold;
+    color: #d9534f; /* Red color for emphasis */
+    text-align: center;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f8d7da; /* Light red background */
+    border: 1px solid #d9534f; /* Red border */
+    border-radius: 5px;
+    display: inline-block;
+}
+
+        #order-info {
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(255, 0, 0, 0.2);
+            border: 2px solid red;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
     </style>
 </head>
 
@@ -203,6 +228,9 @@
             <h1>Daisuki Japanese Food</h1>
             <p class="tagline">Authentic Flavors on the Go!</p>
         </header>
+
+        <p id="order-info">Fetching order details...</p>
+
 
         <section id="customize-section" class="customize-section">
             <h2>Build Your Own Ramen</h2>
@@ -522,11 +550,66 @@
             overlay.style.display = 'none';
         });
 
+
         const menuItems = document.querySelectorAll('.menu-item');
         const cartItemsList = document.getElementById('cart-items');
         const cartTotalDisplay = document.getElementById('cart-total');
         const checkoutButton = document.getElementById('checkout');
+
         let cart = [];
+
+        //cartupdate
+
+// Function to add item to cart
+function addToCart(name, price) {
+            cart.push({ name, price });
+            updateCartDisplay();
+        }
+
+        // Function to update cart display
+        function updateCartDisplay() {
+            const cartItemsList = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+
+            // Clear the current cart items
+            cartItemsList.innerHTML = '';
+            let totalPrice = 0;
+
+            // Loop through the cart and display items
+            cart.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${item.name} - ₱${item.price}`;
+                cartItemsList.appendChild(listItem);
+                totalPrice += item.price;
+            });
+
+            // Update the total price
+            cartTotal.textContent = `₱${totalPrice.toFixed(2)}`;
+        }
+
+        // Checkout button functionality
+        document.getElementById('checkout').addEventListener('click', function () {
+            if (cart.length === 0) {
+                return;
+            }
+
+            // Create an order object
+            const orderData = cart.map(item => ({
+                name: item.name,
+                price: item.price
+            }));
+
+            // Save the order data (you can later send this to your server)
+            const adminOrders = JSON.parse(localStorage.getItem('admin-orders')) || [];
+            adminOrders.push(orderData);
+            localStorage.setItem('admin-orders', JSON.stringify(adminOrders));
+
+            // Display an alert and clear the cart
+            cart = [];  // Empty the cart
+            updateCartDisplay();
+        });
+
+        //cart update
 
 
         function updateCartDisplay() {
@@ -640,44 +723,11 @@
     { orderNumber: 1, itemName: "Miso Ramen", quantity: 2, price: 295, status: "Pending" }
 ];
 
- //reflect to the admin panel
-
- let cartItems = [
-        { name: "Daisuki Midori Ramen", price: 299, quantity: 2 },
-        { name: "Daisuki Spicy Ramen", price: 299, quantity: 1 },
-    ];
-
-    const checkoutBtn = document.getElementById("checkout");
-
-    checkoutBtn.addEventListener("click", function() {
-        // Assuming you have a function to calculate the total
-        const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-        // Generate a random order number
-        const orderNumber = Math.floor(Math.random() * 1000);
-
-        // Create the order object
-        const order = {
-            orderNumber: orderNumber,
-            items: cartItems,
-            total: total,
-            status: "Pending",
-        };
-
-        // Save to localStorage (or a different place based on your setup)
-        let orders = JSON.parse(localStorage.getItem("admin-orders")) || [];
-        orders.push(order);
-        localStorage.setItem("admin-orders", JSON.stringify(orders));
-
-        // Clear the cart (optional)
-        cartItems = [];
-
-        // Optionally, redirect to the confirmation page or show a success message
-        alert("Order placed successfully!");
-    });
-
-
-        //reflect to the admin panel
+document.addEventListener("DOMContentLoaded", function() {
+            const orderMode = localStorage.getItem("orderMode") || "Not Selected";
+            const orderNumber = localStorage.getItem("orderNumber") || "N/A";
+            document.getElementById("order-info").innerHTML = `Order Mode: ${orderMode} <br> Order No: ${orderNumber}`;
+        });
 
 
          //fetch
