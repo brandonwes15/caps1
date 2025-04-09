@@ -297,65 +297,56 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-    // Function to render orders from localStorage
+        document.addEventListener("DOMContentLoaded", function () {
     function renderOrders() {
-        const ordersTable = document.getElementById('orders-table').getElementsByTagName('tbody')[0];
-        ordersTable.innerHTML = ''; // Clear any existing rows
+        const ordersTable = document.getElementById("orders-table").getElementsByTagName("tbody")[0];
+        ordersTable.innerHTML = ""; // Clear table
 
-        const orders = JSON.parse(localStorage.getItem('admin-orders')) || [];
+        const orders = JSON.parse(localStorage.getItem("admin-orders")) || [];
 
         if (orders.length === 0) {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td colspan="4">No orders yet.</td>`;
-            ordersTable.appendChild(row);
+            ordersTable.innerHTML = `<tr><td colspan="5">No orders yet.</td></tr>`;
+            return;
         }
 
         orders.forEach((order, index) => {
-            // Check if the order is an array (to prevent errors)
-            if (Array.isArray(order)) {
-                const row = document.createElement('tr');
-                const items = order.map(item => `${item.name} (₱${item.price})`).join(', ');
-                const total = order.reduce((sum, item) => sum + item.price, 0);
-
-                row.innerHTML = `
-                    <td>Order #${index + 1}</td>
-                    <td>${items}</td>
-                    <td>₱${total.toFixed(2)}</td>
-                    <td><button class="serve-btn" data-index="${index}">Serve</button></td>
-                `;
-                ordersTable.appendChild(row);
-            } else {
-                console.error(`Invalid order format at index ${index}`);
+            if (!order.items || !Array.isArray(order.items)) {
+                console.error(`Invalid order format at index ${index}`, order);
+                return;
             }
+
+            const items = order.items.map(item => `${item.name} (₱${item.price} x ${item.quantity})`).join(", ");
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>Order #${order.orderNumber}</td>
+                <td>${order.mode || "N/A"}</td> 
+                <td>${items}</td>
+                <td>₱${order.total.toFixed(2)}</td>
+                <td>${order.status}</td>
+                <td><button class="serve-btn" data-index="${index}">Serve</button></td>
+            `;
+            ordersTable.appendChild(row);
         });
 
-        // Attach event listeners to each "Serve" button dynamically
-        const serveButtons = document.querySelectorAll('.serve-btn');
-        serveButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const index = button.getAttribute('data-index');
-                serveOrder(index);
+        // Attach event listeners to "Serve" buttons
+        document.querySelectorAll(".serve-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                serveOrder(this.getAttribute("data-index"));
             });
         });
     }
 
-    // Function to serve an order and remove it from the list
     function serveOrder(index) {
-        // Get the orders from localStorage
-        const orders = JSON.parse(localStorage.getItem('admin-orders')) || [];
+        let orders = JSON.parse(localStorage.getItem("admin-orders")) || [];
 
-        // Remove the served order from the orders array
-        orders.splice(index, 1);
-
-        // Save the updated orders back to localStorage
-        localStorage.setItem('admin-orders', JSON.stringify(orders));
-
-        // Re-render the orders table to reflect the updated list
-        renderOrders();
+        if (orders[index]) {
+            orders.splice(index, 1);
+            localStorage.setItem("admin-orders", JSON.stringify(orders));
+            renderOrders();
+        }
     }
 
-    // Call the function to render orders when the page loads
     renderOrders();
 });
 
@@ -416,76 +407,18 @@
         populateTable();
         populatePendingOrders();
 
-
-
-        // reflected orders
-            
-document.addEventListener("DOMContentLoaded", function () {
-    function renderOrders() {
-        const ordersTable = document.getElementById("orders-table").getElementsByTagName("tbody")[0];
-        ordersTable.innerHTML = ""; // Clear table
-
-        const orders = JSON.parse(localStorage.getItem("admin-orders")) || [];
-
-        if (orders.length === 0) {
-            ordersTable.innerHTML = `<tr><td colspan="4">No orders yet.</td></tr>`;
-            return;
-        }
-
-        orders.forEach((order, index) => {
-            const row = document.createElement("tr");
-            const items = order.items.map(item => `${item.name} (₱${item.price})`).join(", ");
-
-            row.innerHTML = `
-                <td>Order #${order.orderNumber}</td>
-                <td>${items}</td>
-                <td>₱${order.total.toFixed(2)}</td>
-                <td>${order.status}</td>
-                <td><button class="serve-btn" data-index="${index}">Serve</button></td>
-            `;
-            ordersTable.appendChild(row);
-        });
-
-        // Attach event listeners to "Serve" buttons
-        document.querySelectorAll(".serve-btn").forEach(button => {
-            button.addEventListener("click", function () {
-                const index = this.getAttribute("data-index");
-                serveOrder(index);
-            });
-        });
-    }
-
-    function serveOrder(index) {
-        let orders = JSON.parse(localStorage.getItem("admin-orders")) || [];
-
-        if (orders[index]) {
-            orders.splice(index, 1);
-            localStorage.setItem("admin-orders", JSON.stringify(orders));
-            renderOrders();
-        }
-    }
-
-    renderOrders();
-});
-
-        //reflected orders
-
         
 
         //logout
         document.addEventListener('DOMContentLoaded', function () {
     const logoutButton = document.getElementById('logout-btn');
-
-    // Check if the user is authenticated (if applicable)
-    // For now, we just assume the user is logged in, and you can implement authentication checks
     logoutButton.addEventListener('click', function () {
-        // Clear any session data if necessary (e.g., authentication token, user info)
-        localStorage.removeItem('admin-user'); // Replace with your actual item key for the session
-        
-        // Redirect to login page after logout
-        window.location.href = 'login.html'; // Replace with your login page URL
+        localStorage.removeItem('admin-user'); // Clear session
+        localStorage.removeItem('admin-orders'); // Optional: clear orders on logout
+        window.location.href = 'login.html';
     });
 });
+
     </script>
 </body>
 
