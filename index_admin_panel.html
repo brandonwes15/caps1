@@ -208,9 +208,11 @@
     <table id="orders-table">
         <thead>
             <tr>
-                <th>Order ID</th>
+                    <th>Order No.</th>
+                    <th>Order Mode</th> 
                         <th>Items</th>
                         <th>Total</th>
+                        <th>Order status</th>
                         <th>Actions</th>
             </tr>
         </thead>
@@ -297,6 +299,8 @@
             });
         }
 
+        
+    
         document.addEventListener("DOMContentLoaded", function () {
     function renderOrders() {
         const ordersTable = document.getElementById("orders-table").getElementsByTagName("tbody")[0];
@@ -315,7 +319,11 @@
                 return;
             }
 
-            const items = order.items.map(item => `${item.name} (₱${item.price} x ${item.quantity})`).join(", ");
+            const items = order.items.map(item => {
+                return `${item.name} (₱${item.price} x ${item.quantity})<br>
+                <small>Ingredients: ${item.ingredients}</small>`;
+            }).join("<br><br>");
+
             const row = document.createElement("tr");
 
             row.innerHTML = `
