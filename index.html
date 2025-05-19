@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daisuki Cart - Japanese Food</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="index_style.css">
     <style>
         /* (Your existing CSS styles - keep them) */
         .remove-item {
@@ -743,9 +743,7 @@
         });
 
         customizeBowlButton.addEventListener('click', () => {
-            if (cart.length === 0) {
-                alert("Please add a dish to your order first before customizing.");
-            } else {
+            {
                 show(customizationSection);
                 populateCustomizeTargetBowls();
             }
